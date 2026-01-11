@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Автомобили с пробегом</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .cars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .car-card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .car-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        
+        .car-price {
+            color: green;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .telegram-btn {
+            display: inline-block;
+            background: #0088cc;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+        
+        .telegram-btn:hover {
+            background: #006699;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚗 Автомобили с пробегом</h1>
+    <p>Свяжитесь с нами для покупки: <a href="https://t.me/yatoms" target="_blank" class="telegram-btn">@yatoms в Telegram</a></p>
+    
+    <div id="cars-container" class="cars-grid">
+        <!-- Сюда автоматически добавятся автомобили -->
+    </div>
+    
+    <script>
+        // Функция загрузки автомобилей
+        async function loadCars() {
+            try {
+                // Загружаем данные из файла cars.json
+                const response = await fetch('data/cars.json');
+                const data = await response.json();
+                
+                // Показываем автомобили
+                const container = document.getElementById('cars-container');
+                container.innerHTML = '';
+                
+                data.cars.forEach(car => {
+                    const carCard = document.createElement('div');
+                    carCard.className = 'car-card';
+                    carCard.innerHTML = `
+                        <img src="${car.image}" alt="${car.title}" class="car-image">
+                        <h3>${car.title}</h3>
+                        <p>Год: ${car.year}</p>
+                        <p>Пробег: ${car.mileage}</p>
+                        <p>${car.location}</p>
+                        <div class="car-price">${car.price}</div>
+                        <a href="https://t.me/yatoms" target="_blank" class="telegram-btn">
+                            Узнать подробнее
+                        </a>
+                    `;
+                    container.appendChild(carCard);
+                });
+                
+                // Показываем когда обновлено
+                const updateInfo = document.createElement('div');
+                updateInfo.style.marginTop = '20px';
+                updateInfo.style.color = '#666';
+                updateInfo.textContent = `Обновлено: ${new Date(data.last_updated).toLocaleString('ru-RU')}`;
+                container.parentNode.appendChild(updateInfo);
+                
+            } catch (error) {
+                console.error('Ошибка загрузки:', error);
+                document.getElementById('cars-container').innerHTML = `
+                    <div style="text-align: center; padding: 50px;">
+                        <h3>⚠️ Не удалось загрузить автомобили</h3>
+                        <p>Попробуйте обновить страницу или напишите нам:</p>
+                        <a href="https://t.me/yatoms" target="_blank" class="telegram-btn">
+                            @yatoms в Telegram
+                        </a>
+                    </div>
+                `;
+            }
+        }
+        
+        // Загружаем автомобили при открытии страницы
+        document.addEventListener('DOMContentLoaded', loadCars);
+    </script>
+</body>
+</html>
